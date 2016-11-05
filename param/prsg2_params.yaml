@@ -3,7 +3,7 @@
 # For a wireless connection like XBee, the port is typically
 # /dev/ttyUSB# where # is a number such as 0, 1, 2, etc.
 
-port: /dev/ttyAMA0
+port: 1    #/dev/ttyAMA0
 baud: 115200
 timeout: 1.0
 
@@ -17,18 +17,18 @@ base_controller_rate: 10
 base_frame: base_link
 
 # === Robot drivetrain parameters
-wheel_diameter: 0.070
-wheel_track: 0.198
-encoder_resolution: 2449 # = 48*46.8512 from Pololu for 130rpm motors
-gear_reduction: 1 # Can't use gear_reduction since it messes up motor ctl.
+wheel_diameter: 0.060
+wheel_track: 0.205
+encoder_resolution: 48 # from Pololu for 130rpm motors
+gear_reduction: 46.8512
 motors_reversed: False
 
 # === PID parameters
-Kp: 100
-Kd: 0
+Kp: 30
+Kd: 20
 Ki: 0
-Ko: 100
-#accel_limit: 1.0
+Ko: 20
+accel_limit: 1.0
 
 # === Sensor definitions.  Examples only - edit for your robot.
 #     Sensor type can be one of the follow (case sensitive!):
