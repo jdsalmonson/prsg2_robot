@@ -16,7 +16,7 @@
         <param name="rate" value="10.0"/>
     </node>
 
-    <node pkg="rosbag" type="rosbag" name="rosbag_record_sensors"
+    <node pkg="rosbag" type="record" name="rosbag_record_sensors"
           args="record -o /tmp/prsg2-sensors /arduino/sensor/battery_voltage /arduino/sensor/ir_1 /arduino/sensor/ir_2"
 	  if="$(arg record_sensors)" />
 	  
