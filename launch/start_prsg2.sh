@@ -31,4 +31,5 @@ export ROS_IP=`hostname -I | cut -d' ' -f1`
 # last line of /etc/sudoers removes need for password
 sudo modprobe --first-time i2c-dev
 
-roslaunch prsg2_robot prsg2_controller.launch
+#roslaunch prsg2_robot prsg2_controller.launch
+roslaunch prsg2_robot prsg2_controller_servos.launch
