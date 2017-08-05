@@ -44,7 +44,7 @@ sensors: {
   ir_1:            {pin: 0, type: GP2Y0A60, rate: 10, frame: 'ir_right_front_link'},
   ir_2:            {pin: 2, type: GP2Y0A60, rate: 10,
                     frame: 'ir_left_front_link'},
-  servo_1:            {pin: 3, type: Analog, rate: 10, frame: 'srvo_right_link'},
+  servo_1:            {pin: 3, type: Analog, rate: 10, frame: 'srvo_right_front_link'},
   servo_2:            {pin: 4, type: Analog, rate: 10,
                     frame: 'srvo_left_front_link'},
   ir_5:            {pin: 5, type: GP2Y0A60, rate: 10, frame: 'ir_right_link'},

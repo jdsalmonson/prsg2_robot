@@ -17,7 +17,7 @@
     </node>
 
     <node pkg="rosbag" type="record" name="rosbag_record_sensors"
-          args="record -o /tmp/prsg2-sensors /odom /cmd_vel /arduino/sensor/battery_voltage /arduino/sensor/ir_1 /arduino/sensor/ir_2 /arduino/sensor/servo_1 /arduino/sensor_servo_2"
+          args="record -o /tmp/prsg2-sensors /odom /cmd_vel /arduino/sensor/battery_voltage /arduino/sensor/ir_1 /arduino/sensor/ir_2 /arduino/sensor/servo_1 /arduino/sensor/servo_2"
 	  if="$(arg record_sensors)" />
 
     <node name="arduino" pkg="ros_arduino_python" type="arduino_node.py" output="screen">
