@@ -1,0 +1,27 @@
+<launch>
+
+    <arg name="record_sensors" default="true" />
+
+    <arg name="urdf_file" default="$(find prsg2_robot)/urdf/prsg2_description.xacro" />
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg urdf_file)" />
+
+    <!-- Publish the robot state. -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
+        <param name="publish_frequency" value="10.0"/>
+    </node>
+
+    <!-- Publish frame transformations for joint angles. -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="use_gui" value="False" />
+        <param name="rate" value="10.0"/>
+    </node>
+
+    <node pkg="rosbag" type="record" name="rosbag_record_sensors"
+          args="record -o /tmp/prsg2-sensors /odom /cmd_vel /arduino/sensor/battery_voltage /arduino/sensor/ir_1 /arduino/sensor/ir_2 /arduino/sensor/servo_1 /arduino/sensor_servo_2"
+	  if="$(arg record_sensors)" />
+
+    <node name="arduino" pkg="ros_arduino_python" type="arduino_node.py" output="screen">
+        <rosparam file="$(find prsg2_robot)/param/prsg2_params_servos.yaml" />
+    </node>
+
+</launch>
