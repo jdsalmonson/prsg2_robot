@@ -47,7 +47,6 @@ sensors: {
   servo_1:            {pin: 3, type: Analog, rate: 10, frame: 'srvo_right_front_link'},
   servo_2:            {pin: 4, type: Analog, rate: 10,
                     frame: 'srvo_left_front_link'},
-  ir_5:            {pin: 5, type: GP2Y0A60, rate: 10, frame: 'ir_right_link'},
   button_a:        {pin: 100, type: Digital, rate: 10},
   button_b:        {pin: 101, type: Digital, rate: 10},
   button_c:        {pin: 102, type: Digital, rate: 10},
