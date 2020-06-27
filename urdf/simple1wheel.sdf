@@ -1,0 +1,86 @@
+<sdf version='1.6'>
+  <model name='rrbot'>
+    <link name='base_link'>
+      <pose frame=''>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose frame=''>0 0 0.1 0 -0 0</pose>
+        <mass>1e-05</mass>
+        <inertia>
+          <ixx>1e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-06</iyy>
+          <iyz>0</iyz>
+          <izz>1e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_link_fixed_joint_lump__collision_collision'>
+        <pose frame=''>0 0 0.1 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.4 0.2 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='base_link_fixed_joint_lump__visual_visual'>
+        <pose frame=''>0 0 0.1 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.4 0.2 0.1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+    <link name='left_wheel'>
+      <pose frame=''>0.2 0.13 0.1 0 1.5707 1.5707</pose>
+      <inertial>
+        <pose frame=''>0.2 0.13 0.1 0 -0 0</pose>
+        <mass>1e-05</mass>
+        <inertia>
+          <ixx>1e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-06</iyy>
+          <iyz>0</iyz>
+          <izz>1e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='left_wheel_fixed_joint_lump__collision_collision'>
+        <pose frame=''>0.2 0.13 0.1 -3.14159 1.57079 -1.57089</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.1</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name='left_wheel_fixed_joint_lump__visual_visual'>
+        <pose frame=''>0.2 0.13 0.1 -3.14159 1.57079 -1.57089</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.1</radius>
+          </cylinder>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='joint1' type='revolute'>
+      <child>left_wheel</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>-1 9.6e-05 0</xyz>
+        <limit>
+          <lower>-100</lower>
+          <upper>100</upper>
+          <effort>30</effort>
+          <velocity>1</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+  </model>
+</sdf>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="prsg2_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- <xacro:property name="pi" value="3.14159" /> -->
+  <xacro:property name="degree" value="${pi / 180}" />
+  <xacro:property name="inch" value="0.0254" />
+
+  <xacro:property name="base_diameter" value="${9 * inch}" />
+  <xacro:property name="base_thickness" value="0.006" />
+  <xacro:property name="deck_height" value="0.050" />
+
+  <xacro:property name="wheel_diameter" value="0.060" />
+  <xacro:property name="wheel_thickness" value="0.008" />
+  <xacro:property name="wheel_separation" value="0.205" />
+
+  <xacro:property name="caster_diameter" value="0.018" />
+  <xacro:property name="caster_thickness" value="0.018" />
+  <xacro:property name="caster_setback" value="0.010" />
+
+  <!-- servo setback is the center of the servo axis, ir setback is the centering of the sensor on servo -->
+  <xacro:property name="servo_setback" value="0.002" />
+  <xacro:property name="ir_setback" value="-0.015" />
+
+  <xacro:property name="ir_left_servo_angle" value="${-45. * degree}" />
+  <xacro:property name="ir_right_servo_angle" value="${30. * degree}" />  
+
+  <xacro:property name="camera_height" value="0.075" />
+  <xacro:property name="camera_setback" value="0.025" />
+
+  <xacro:macro name="material_color" params="r g b a:=1.0">
+    <material name="color_${r}_${g}_${b}_{$a}">
+      <color rgba="${r} ${g} ${b} ${a}" />
+    </material>
+  </xacro:macro>
+
+  <xacro:macro name="polar_position" params="r theta z:=0 l0 l1 angle:=0">
+    <link name="${l1}_ray_link" />
+    <joint name="${l0}_to_${l1}_ray" type="fixed">
+      <parent link="${l0}" />
+      <child link="${l1}_ray_link" />
+      <origin rpy="0 0 ${theta}" />
+    </joint>
+    <joint name="${l1}_ray_to_${l1}" type="fixed">
+      <parent link="${l1}_ray_link" />
+      <child link="${l1}" />
+      <origin xyz="${r} 0 ${z}" rpy="0 0 ${angle}" />
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="polar_position_servo" params="r theta z:=0 l0 l1 angle:=0">
+    <link name="${l1}_ray_link" />
+    <joint name="${l0}_to_${l1}_ray" type="fixed">
+      <parent link="${l0}" />
+      <child link="${l1}_ray_link" />
+      <origin rpy="0 0 ${theta}" />
+    </joint>
+    <joint name="${l1}_ray_to_${l1}" type="fixed">  <!-- "revolute">  -->
+      <parent link="${l1}_ray_link" />
+      <child link="${l1}" />
+      <origin xyz="${r} 0 ${z}" rpy="0 0 ${angle}" />
+      <!-- axis of servo rotation: -->
+      <!-- <axis xyz="0 0 1" />
+      <limit lower="0" upper="${pi}" velocity="1.0" effort="1" />  -->
+    </joint>
+  </xacro:macro>
+
+  <!-- The robot description -->
+
+  <link name="base_link">
+    <collision>
+      <origin xyz="0 0 ${deck_height - base_thickness/2}" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="${base_thickness}" radius="${base_diameter / 2}" />
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 ${deck_height - base_thickness/2}" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="${base_thickness}" radius="${base_diameter / 2}" />
+      </geometry>
+      <xacro:material_color r="0.5" g="0.5" b="0.5" a="0.3" />
+    </visual>
+    <inertial>
+      <origin xyz="0 0 ${deck_height - base_thickness/2}" rpy="0 0 0" />
+      <mass value="1"/>
+      <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    </inertial>
+  </link>
+
+  <xacro:macro name="wheel" params="link_name relative_link r theta">
+    <link name="${link_name}">
+      <collision>
+        <origin xyz="0 0 0" rpy="${90 * degree} 0 0" />
+        <geometry>
+          <cylinder length="${wheel_thickness}" radius="${wheel_diameter / 2}" />
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="0 0 0" rpy="${90 * degree} 0 0" />
+        <geometry>
+          <cylinder length="${wheel_thickness}" radius="${wheel_diameter / 2}" />
+        </geometry>
+        <xacro:material_color r="0.4" g="0.4" b="1.0" />
+      </visual>
+      <inertial>
+	<origin xyz="0 0 0" rpy="${90 * degree} 0 0" />
+	<mass value="1"/>
+	<inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+      </inertial>
+    </link>
+    <xacro:polar_position r="${r}" theta="${theta}" z="${wheel_diameter / 2}"
+      l0="${relative_link}" l1="${link_name}"
+      angle="${- theta}" />
+  </xacro:macro>
+
+  <xacro:wheel link_name="left_wheel_link" relative_link="base_link"
+    r="${wheel_separation / 2}" theta="${90 * degree}" />
+
+  <xacro:wheel link_name="right_wheel_link" relative_link="base_link"
+    r="${wheel_separation / 2}" theta="${-90 * degree}" />
+
+  <link name="front_caster_link">
+    <collision>
+      <origin rpy="0 0 0" />
+      <geometry>
+        <sphere radius="${caster_diameter/2}" />
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" />
+      <geometry>
+        <sphere radius="${caster_diameter/2}" />
+      </geometry>
+      <xacro:material_color r="1.0" g="1.0" b="1.0" />
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.1"/>
+      <inertia ixx="10" ixy="0" ixz="0" iyy="10" iyz="0" izz="10" />
+    </inertial>
+  </link>
+  <xacro:polar_position
+    r="${base_diameter/2 - caster_setback}"
+    theta="${0 * degree}" angle="${0 * degree}"
+    z="${caster_diameter / 2}"
+    l0="base_link" l1="front_caster_link" />
+
+  <link name="rear_caster_link">
+    <collision>
+      <origin rpy="${90 * degree} 0 0" />
+      <geometry>
+        <sphere radius="${caster_diameter/2}" />
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="${90 * degree} 0 0" />
+      <geometry>
+        <sphere radius="${caster_diameter/2}" />
+      </geometry>
+      <xacro:material_color r="1.0" g="1.0" b="1.0" />
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.1"/>
+      <inertia ixx="10" ixy="0" ixz="0" iyy="10" iyz="0" izz="10" />
+    </inertial>
+  </link>
+  <xacro:polar_position
+    r="${base_diameter/2 - caster_setback}"
+    theta="${-180 * degree}" angle="${180 * degree}"
+    z="${caster_diameter / 2}"
+    l0="base_link" l1="rear_caster_link" />
+
+  <xacro:macro name="ir_sensor_servo" params="link_name theta z:=0.019 angle:=0">
+    <link name="${link_name}">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+	  <!-- platter on which IR sensor sits: -->
+	  <!-- length might be z-offset + thickness instead -->
+          <!-- <cylinder length="0.002" radius="0.015" />  -->
+	  <box size="0.015 0.01 0.005" />
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+	  <!-- platter on which IR sensor sits: -->
+	  <!-- length might be z-offset + thickness instead -->
+          <!-- <cylinder length="0.002" radius="0.015" /> -->
+	  <box size="0.015 0.01 0.005" />
+        </geometry>
+      </visual>
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0" />
+	<mass value="0.1"/>
+	<inertia ixx="10" ixy="0" ixz="0" iyy="10" iyz="0" izz="10" />
+      </inertial>      
+    </link>
+    <xacro:polar_position_servo r="${base_diameter/2 - servo_setback}"
+      theta="${theta}" z="${deck_height + z}" angle="${angle}"
+      l0="base_link" l1="${link_name}" />
+  </xacro:macro>
+
+  <!--  This needs to link from ir_sensor_servo.  polar_position needs to be changed. -->
+  <xacro:macro name="ir_sensor" params="link_name theta z:=0.021 angle:=0">
+    <link name="${link_name}">
+      <collision>
+        <origin xyz="${-ir_setback -0.004385} 0 ${z-0.00249}" rpy="0 0 0" />
+        <geometry>
+          <!-- Dimensions taken from Pololu dimensional diagram:
+            https://www.pololu.com/file/0J817/sds02a-dimensions.pdf -->
+          <box size="0.00877 0.01041 0.03302" />
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="${-ir_setback -0.004385} 0 ${z-0.00249}" rpy="0 0 0" />
+        <geometry>
+          <!-- Dimensions taken from Pololu dimensional diagram:
+            https://www.pololu.com/file/0J817/sds02a-dimensions.pdf -->
+          <box size="0.00877 0.01041 0.03302" />
+        </geometry>
+      </visual>
+      <inertial>
+	<origin xyz="${-ir_setback -0.004385} 0 ${z-0.00249}" rpy="0 0 0" />
+	<mass value="0.1"/>
+	<inertia ixx="10" ixy="0" ixz="0" iyy="10" iyz="0" izz="10" />
+      </inertial>
+    </link>
+    <xacro:polar_position r="${base_diameter/2 - ir_setback}"
+      theta="${theta}" z="${deck_height + z}" angle="${angle}"
+      l0="base_link" l1="${link_name}" />
+  </xacro:macro>
+
+  <!--  <xacro:ir_sensor link_name="ir_left_front_link" theta="${37.4 * degree}" />  -->
+  <!-- <xacro:ir_sensor link_name="ir_right_front_link" theta="${-27.8 * degree}" />  -->
+
+  <xacro:ir_sensor_servo link_name="ir_left_front_servo_link" theta="${37.4 * degree}" angle="${ir_left_servo_angle}" />
+  <!-- <xacro:ir_sensor_servo link_name="ir_right_front_servo_link" last_link_name="ir_right_front_link" theta="${-27.8 * degree}" angle="${ir_right_servo_angle}" />  -->
+
+
+</robot>
